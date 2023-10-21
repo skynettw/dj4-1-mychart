@@ -1,3 +1,6 @@
 from django.contrib import admin
+from mysite.models import Population
 
-# Register your models here.
+@admin.register(Population)
+class PopulationAdmin(admin.ModelAdmin):
+    list_display = ['name', 'total', 'male', 'female']

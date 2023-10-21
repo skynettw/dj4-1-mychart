@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% block web-title %}首頁{% endblock %}
+{% block title %}文字雲繪製{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-8 mx-auto" style="width:60rem;">
+        <center>
+            {% if img_data %}
+            <img src="data:image/png;base64,{{ img_data }}"><br>
+            {% endif %}
+            <form action="." method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" value="上傳並繪製" class="btn btn-primary">
+            </form>
+        </center>
+    </div>
+</div>
+{% endblock %}

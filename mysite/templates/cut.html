@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block web-title %}首頁{% endblock %}
+{% block title %} 斷字示範 {% endblock %}
+{% block content %}
+<script>
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== "") {
+          const cookies = document.cookie.split(";");
+          for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + "=")) {
+              cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+              break;
+            }
+          }
+        }
+        return cookieValue;
+      }
+    $(document).ready( function () {
+        $('#cut').click(function () {
+            const rawdata = $('#rawdata').val();
+            $.ajax({
+                method: "POST",
+                url: "/cut/",
+                dataType: "json",
+                data: JSON.stringify({payload:rawdata}),
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest",
+                    "X-CSRFToken": getCookie("csrftoken"),
+                },
+                success: (data) => {
+                    $('#finaldata').text(data['data']);
+                },
+                error: (error) => {
+                    $('#finaldata').text("斷字失敗！")
+                },
+              });
+        });
+    });
+</script>
+<table>
+    <tr>
+        <td>
+            <textarea id="rawdata" name="rawdata" rows=5 cols=60>
+這是一段示範用的文字，你也可以自己貼上需要斷字的內容，取代這段文字。</textarea>
+        </td>
+    </tr>
+    <tr>
+        <td><a class="btn btn-sm btn-primary" id="cut">開始斷字</a></td>
+    </tr>
+    <tr>
+        <td><textarea id="finaldata" rows=5 cols=60></textarea></td>
+    </tr>
+</table>
+        
+
+{% endblock %}
