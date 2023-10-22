@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+{% block web-title %}首頁{% endblock %}
+{% block title %}{{ chart_name }}{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-8 mx-auto" style="width:60rem;">
+        <center>
+        {% autoescape off %}
+            {{ plot_div }}
+        {% endautoescape %}
+        </center>
+    </div>
+</div>
+{% endblock %}

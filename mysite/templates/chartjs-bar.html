@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block web-title %}首頁{% endblock %}
+{% block title %} ChartJS 直條圖{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="col-8 mx-auto" style="width:60rem;">
+        <center>
+            <div>
+                <canvas id="myChart"></canvas>
+            </div>
+            <script>
+                $.ajax({
+                url: "/getdata/",
+                dataType: "json",
+                success: (data) => {
+                    drawChart(JSON.parse(data));
+                },
+              });
+              function drawChart(d) {
+                const ctx = document.getElementById('myChart');
+                new Chart(ctx, {
+                  type: 'bar',
+                  data: {
+                    labels: d['label'],
+                    datasets: [{
+                      label: '東京月均高溫(攝氏度)',
+                      data: d['value'],
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    scales: {
+                      y: {
+                        beginAtZero: true
+                      }
+                    }
+                  }
+                });
+            }
+              </script>
+        </center>
+    </div>
+</div>
+{% endblock %}
