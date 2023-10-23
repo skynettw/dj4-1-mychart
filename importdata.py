@@ -1,9 +1,6 @@
-import os
-import django
-import pandas as pd
+import os, django, pandas as pd
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'mychart.settings')
 django.setup()
-
 from mysite.models import Population
 df = pd.read_excel("population-112.xls")
 data = df[['Unnamed: 0', 'Unnamed: 1', 'Unnamed: 2']]

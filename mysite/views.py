@@ -1,10 +1,11 @@
 from django.shortcuts import render, redirect
+from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse, JsonResponse
 from django.db.models import F
 from mychart.settings import BASE_DIR
 from mysite.forms import TextFileUploadForm
 from mysite.models import Population
-import jieba, json, io, base64, urllib.parse
+import jieba, json, io, base64
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib
@@ -18,6 +19,7 @@ import pandas as pd
 def index(request):
     return render(request, "index.html", locals())
 
+@csrf_exempt
 def cut(request):
     is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
     if is_ajax:
@@ -82,12 +84,12 @@ def heartcurve_polar(request):
 def mat_bar(request):
     chart_name = "長條圖"
     data = Population.objects.annotate(t=F('male')+F('female')).all().order_by('t')
-    population = [d.male for d in data]
+    population = [d.total() for d in data]
     names = [d.name for d in data]
     matplotlib.rc('font', family='Microsoft JhengHei')
     plt.figure()
     plt.title("112年各縣市人口排行")
-    plt.xlim((0, 4000000))
+    plt.xlim((0, 7000000))
     plt.xlabel("百萬人")
     plt.grid()
     plt.barh(range(len(population)), population, tick_label=names)
@@ -184,7 +186,7 @@ def plotly_curve(request):
 def plotly_bar(request):
     chart_name = "Plotly直條圖（台灣各縣市人口統計排行）"
     data = Population.objects.annotate(t=F('male')+F('female')).all().order_by('-t')
-    population = [d.male for d in data]
+    population = [d.total() for d in data]
     names = [d.name for d in data]
     df = pd.read_csv("tokyo.csv")
     data = [go.Bar(
@@ -205,11 +207,11 @@ def plotly_line(request):
     return render(request, "plotly-chart.html", locals())
 
 def plotly_3d(request):
-    chart_name = "Plotly折線圖（立體函數圖）"
+    chart_name = "Plotly（立體函數圖）"
     z = np.linspace(0, 10, 100)
     x = np.cos(z)
     y = np.sin(z)
-    trace = go.Scatter3d(
+    curve = go.Scatter3d(
     x = x, y = y, z = z,mode = 'markers', marker = dict(
       size = 3,
       color = x, 
@@ -217,6 +219,6 @@ def plotly_3d(request):
       )
     )
     layout = go.Layout(title = '3D 函數圖形')
-    data = go.Figure(data = [trace], layout = layout)
+    data = go.Figure(data = [curve], layout = layout)
     plot_div = plot(data, output_type='div')
     return render(request, "plotly-chart.html", locals())

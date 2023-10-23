@@ -4,9 +4,7 @@ class Population(models.Model):
     name = models.CharField(max_length=10)
     male = models.PositiveIntegerField(default=0)
     female = models.PositiveIntegerField(default=0)
-    
     def total(self):
-        return self.male + self.female
-    
+        return int(self.male + self.female)
     def __str__(self):
         return self.name
