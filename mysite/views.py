@@ -75,6 +75,7 @@ def heartcurve_polar(request):
     r = 2 * (1 - np.sin(th))
     plt.figure()
     gr = plt.subplot(111, polar=True)
+    plt.polar(th, r)
     image = io.BytesIO()
     plt.savefig(image, format="png")
     image.seek(0)
